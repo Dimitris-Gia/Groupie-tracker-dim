@@ -16,6 +16,7 @@ func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct 
 	Filter     string
 	Year       string
 	Members    []string
+	Album      string
 } {
 	// 👉 Get page from URL
 	pageStr := r.URL.Query().Get("page")
@@ -50,6 +51,7 @@ func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct 
 		Filter     string
 		Year       string
 		Members    []string
+		Album      string
 	}{
 		Artists:    paginatedArtists,
 		Page:       page,
@@ -59,6 +61,7 @@ func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct 
 		Filter:     r.URL.Query().Get("filter"),
 		Year:       r.URL.Query().Get("year"),
 		Members:    r.URL.Query()["members"],
+		Album:      r.URL.Query().Get("album"),
 	}
 	return data
 }

@@ -60,7 +60,8 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// filter := r.URL.Query().Get("filter")
 	year := r.URL.Query().Get("year")
 	members := r.URL.Query()["members"]
-	// album := r.URL.Query().Get("album")
+	albumFrom := r.URL.Query().Get("albumFrom")
+	albumTo := r.URL.Query().Get("albumTo")
 	// location := r.URL.Query().Get("location")
 
 	filtered := []api.Artist{}
@@ -84,6 +85,36 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if !match {
+				continue
+			}
+		}
+		var fromYear, toYear int
+		var err error
+
+		hasAlbumFilter := albumFrom != "" && albumTo != ""
+
+		if hasAlbumFilter {
+			fromYear, err = strconv.Atoi(albumFrom)
+			if err != nil {
+				continue
+			}
+
+			toYear, err = strconv.Atoi(albumTo)
+			if err != nil {
+				continue
+			}
+
+			if fromYear > toYear {
+				fromYear, toYear = toYear, fromYear
+			}
+		}
+		if hasAlbumFilter {
+			a, err := strconv.Atoi(artist.FirstAlbum[:4])
+			if err != nil {
+				continue
+			}
+
+			if a < fromYear || a > toYear {
 				continue
 			}
 		}

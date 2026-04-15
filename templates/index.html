@@ -30,6 +30,30 @@
                 <label for="yearRange">Έτος: <span id="value">1960</span></label>
                 <input type="range" name="year" id="yearRange" min="1960" max="2020" value="1960">
             </div>
+
+            <div class="filter-group">
+                <div class="range-group">
+                    <label>Album range:</label>
+
+                    <input type="number" class="albumFrom" name="albumFrom" id="albumFrom"
+                        min="1960" max="2020" value="1960">
+
+                    <input type="number" class="albumTo" name="albumTo" id="albumTo"
+                        min="1960" max="2020" value="2020">
+                </div>
+                <div class="range">
+                    <label>Album range:</label>
+
+                    <input type="range" class="albumFrom" name="albumFrom" id="albumFrom"
+                        min="1960" max="2020" value="1960">
+
+                    <input type="range" class="albumTo" name="albumTo" id="albumTo"
+                        min="1960" max="2020" value="2020">
+                </div>
+                <div class="slider">
+                    <div class="progress"></div>
+                </div>
+            </div>
             
             <div class="filter-group">
                 <h4>Number of Members</h4>
@@ -91,7 +115,7 @@
     </div>    
         <div class="pagination">
             {{if .HasPrev}}
-                <a href="/?page={{sub .Page 1}}&filter={{.Filter}}&year={{.Year}}{{range $.Members}}&members={{.}}{{end}}">← Previous</a>
+                <a href="/?page={{sub .Page 1}}&filter={{.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">← Previous</a>
             {{else}}
                 <span class="disabled">← Previous</span>
             {{end}}
@@ -101,12 +125,12 @@
                 {{if eq $i $.Page}}
                     <span class="current-page">{{$i}}</span>
                 {{else}}
-                    <a href="/?page={{$i}}&filter={{$.Filter}}&year={{$.Year}}{{range $.Members}}&members={{.}}{{end}}">{{$i}}</a>
+                    <a href="/?page={{$i}}&filter={{$.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">{{$i}}</a>
                 {{end}}
             {{end}}
             
             {{if .HasNext}}
-                <a href="/?page={{add .Page 1}}&filter={{.Filter}}&year={{.Year}}{{range $.Members}}&members={{.}}{{end}}">Next →</a>
+                <a href="/?page={{add .Page 1}}&filter={{.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">Next →</a>
             {{else}}
                 <span class="disabled">Next →</span>
             {{end}}
@@ -115,9 +139,29 @@
     <script>
         const range = document.getElementById("yearRange");
         const value = document.getElementById("value");
+        const slider = document.querySelector(".slider-group");
+        const progress = slider.querySelector(".progress");
+        
+        const from = slider.querySelector(".albumFrom");
+        const to = slider.querySelector(".albumTo");
+
+        const fromVal = slider.querySelector(".albumFromVal");
+        const toVal = slider.querySelector(".albumToVal");
+
 
         range.addEventListener("input", () => {
-        value.textContent = range.value;
+            value.textContent = range.value;
+        });
+      
+        fromVal.addEventListener("input", () => {
+            if(parseInt(fromVal.value) >= parseInt(toVal.value)) {
+                toVal.value = fromVal.value;
+            }
+        });
+        fromVal.addEventListener("input", () => {
+            if(parseInt(toVal.value) <= parseInt(fromVal.value)) {
+                fromVal.value = toVal.value;
+            }
         });
     </script>
 
