@@ -1,3 +1,74 @@
+/* Main layout container - wrap left and right sections */
+.main-layout {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    min-height: calc(100vh - 80px); /* Adjust based on your upper-section height */
+}
+
+/* Left section - fixed width for filters */
+.left-section {
+    width: 280px;
+    flex-shrink: 0;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    border: 2px solid #3498db;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Right section - takes remaining space */
+.right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Filter dropdown styling */
+.filter-selector {
+    margin-bottom: 20px;
+}
+
+.filter-selector label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.filter-dropdown {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}
+
+/* Optional: Add filter categories */
+.filter-group {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.filter-group h4 {
+    margin-bottom: 10px;
+    color: #21b49c;
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    padding: var(--padding);
+    border-radius: 28px;
+    background: #f6f6f6;
+    transition: background 0.25s;
+}
+
 .upper-section {
     flex: 1;
     display: flex;

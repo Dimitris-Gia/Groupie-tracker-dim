@@ -1,9 +1,11 @@
 package handlers
 
 import (
-	"groupie-tracker-dim/api"
 	"net/http"
+	"strconv"
 	"text/template"
+
+	"groupie-tracker-dim/api"
 )
 
 func renderError(w http.ResponseWriter, status int, message string) {
@@ -55,10 +57,42 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := Pagination(6, Artists, r)
+	// filter := r.URL.Query().Get("filter")
+	year := r.URL.Query().Get("year")
+	members := r.URL.Query()["members"]
+	// album := r.URL.Query().Get("album")
+	// location := r.URL.Query().Get("location")
+
+	filtered := []api.Artist{}
+
+	for _, artist := range Artists {
+		if year != "" {
+			y, _ := strconv.Atoi(year)
+			if artist.CreationDate < y {
+				continue
+			}
+		}
+		if len(members) > 0 {
+			match := false
+
+			for _, mStr := range members {
+				m, err := strconv.Atoi(mStr)
+				if err == nil && len(artist.Members) == m {
+					match = true
+					break
+				}
+			}
+
+			if !match {
+				continue
+			}
+		}
+		filtered = append(filtered, artist)
+	}
+
+	data := Pagination(6, filtered, r)
 
 	err = tmpl.Execute(w, data)
-
 	if err != nil {
 		// Return 500 if template execution fails
 		renderError(w, http.StatusInternalServerError, "Internal server error")
@@ -67,5 +101,4 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
-
 }

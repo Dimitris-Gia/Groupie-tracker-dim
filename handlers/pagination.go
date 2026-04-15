@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"groupie-tracker-dim/api"
 	"net/http"
 	"strconv"
+
+	"groupie-tracker-dim/api"
 )
 
 func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct {
@@ -12,6 +13,9 @@ func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct 
 	TotalPages int
 	HasNext    bool
 	HasPrev    bool
+	Filter     string
+	Year       string
+	Members    []string
 } {
 	// 👉 Get page from URL
 	pageStr := r.URL.Query().Get("page")
@@ -43,13 +47,18 @@ func Pagination(ItemsPerPage int, artists []api.Artist, r *http.Request) struct 
 		TotalPages int
 		HasNext    bool
 		HasPrev    bool
+		Filter     string
+		Year       string
+		Members    []string
 	}{
 		Artists:    paginatedArtists,
 		Page:       page,
 		TotalPages: totalPages,
 		HasNext:    end < len(artists),
 		HasPrev:    start > 0,
+		Filter:     r.URL.Query().Get("filter"),
+		Year:       r.URL.Query().Get("year"),
+		Members:    r.URL.Query()["members"],
 	}
 	return data
-
 }

@@ -11,39 +11,87 @@
              <a href="/" title="Home"><h1>Artists</h1></a>
         </div>
     </div>
+    <div class="main-layout">
+        <div class="left-section">
+            <form method="get" action="/">
+            <div class="filter-selector">
+                <label for="filter-select">Main Filter</label>
+                <select id="filter-select" name="filter" class="filter-dropdown">
+                    <option value="">All Artists</option>
+                    <option value="creation_date">Creation Date</option>
+                    <option value="first_album">First Album</option>
+                    <option value="members">Number of Members</option>
+                </select>
+            </div>
+            
+            <!-- Additional filter options you can add -->
+            <div class="filter-group">
+                <h4>Creation Date Range</h4>
+                <label for="yearRange">Έτος: <span id="value">1960</span></label>
+                <input type="range" name="year" id="yearRange" min="1960" max="2020" value="1960">
+            </div>
+            
+            <div class="filter-group">
+                <h4>Number of Members</h4>
+                <label>
+                    <input type="checkbox" name="members" value="1"> Solo Artist
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="2"> 2 Members
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="3"> 3 Members
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="4"> 4 Members
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="5"> 5 members
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="6"> 6 members
+                </label>
+                <label>
+                    <input type="checkbox" name="members" value="7"> 7 members
+                </label>
+            </div>
+            <button type="submit">Apply Filters</button>
+            </form>
+        </div>
 
-    <div class="right-section">
-        <div class="grid-container">
-            {{range .Artists}}
-                <div class="card">
-                    <div class="card-content">
-                        <div class="column">
-                            <div><h2>{{.Name}}</h2></div>  
-                            <div><img src="{{.Image}}" alt="{{.Name}}" width="200"></div> 
-                            <div><p>First Album: {{.FirstAlbum}}</p></div>
-                            <div><p>Creation Date: {{.CreationDate}}</p></div>
-                        </div>
-                        <div class="column">
-                            <div>
-                                <h4>Members:</h4>
-                                <ul>
-                                    {{range .Members}}
-                                        <li>{{.}}</li>
-                                    {{end}}
-                                </ul>
+        <div class="right-section">
+            <div class="grid-container">
+                {{range .Artists}}
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="column">
+                                <div><h2>{{.Name}}</h2></div>  
+                                <div><img src="{{.Image}}" alt="{{.Name}}" width="200"></div> 
+                                <div><p>First Album: {{.FirstAlbum}}</p></div>
+                                <div><p>Creation Date: {{.CreationDate}}</p></div>
                             </div>
-                            <div><a href="{{.ConcertDates}}" title="ConcertDates"><p>Concert Dates</p></a></div>
-                            <div><a href="{{.Locations}}" title="ConcertLocations"><p>Concert Locations</p></a></div>
-                            <div><a href="{{.Relations}}" title="ConcertDatesAndLocations"><p>Concert Dates And Locations</p></a></div>
+                            <div class="column">
+                                <div>
+                                    <h4>Members:</h4>
+                                    <ul>
+                                        {{range .Members}}
+                                            <li>{{.}}</li>
+                                        {{end}}
+                                    </ul>
+                                </div>
+                                <div><a href="{{.ConcertDates}}" title="ConcertDates"><p>Concert Dates</p></a></div>
+                                <div><a href="{{.Locations}}" title="ConcertLocations"><p>Concert Locations</p></a></div>
+                                <div><a href="{{.Relations}}" title="ConcertDatesAndLocations"><p>Concert Dates And Locations</p></a></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {{end}}
+                {{end}}
+            </div>
         </div>
-    </div>
+    </div>    
         <div class="pagination">
             {{if .HasPrev}}
-                <a href="/?page={{sub .Page 1}}">← Previous</a>
+                <a href="/?page={{sub .Page 1}}&filter={{.Filter}}&year={{.Year}}{{range $.Members}}&members={{.}}{{end}}">← Previous</a>
             {{else}}
                 <span class="disabled">← Previous</span>
             {{end}}
@@ -53,16 +101,25 @@
                 {{if eq $i $.Page}}
                     <span class="current-page">{{$i}}</span>
                 {{else}}
-                    <a href="/?page={{$i}}">{{$i}}</a>
+                    <a href="/?page={{$i}}&filter={{$.Filter}}&year={{$.Year}}{{range $.Members}}&members={{.}}{{end}}">{{$i}}</a>
                 {{end}}
             {{end}}
             
             {{if .HasNext}}
-                <a href="/?page={{add .Page 1}}">Next →</a>
+                <a href="/?page={{add .Page 1}}&filter={{.Filter}}&year={{.Year}}{{range $.Members}}&members={{.}}{{end}}">Next →</a>
             {{else}}
                 <span class="disabled">Next →</span>
             {{end}}
         </div>
+
+    <script>
+        const range = document.getElementById("yearRange");
+        const value = document.getElementById("value");
+
+        range.addEventListener("input", () => {
+        value.textContent = range.value;
+        });
+    </script>
 
 </body>
 </html>
