@@ -67,7 +67,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	filtered := []api.Artist{}
 
 	for _, artist := range Artists {
-		if year != "" {
+		if year != "" && year != "1960" {
 			y, _ := strconv.Atoi(year)
 			if artist.CreationDate < y {
 				continue
@@ -88,33 +88,21 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 		}
-		var fromYear, toYear int
-		var err error
-
-		hasAlbumFilter := albumFrom != "" && albumTo != ""
-
-		if hasAlbumFilter {
-			fromYear, err = strconv.Atoi(albumFrom)
-			if err != nil {
+		if albumFrom != "" && albumTo != "" {
+			fromYear, err1 := strconv.Atoi(albumFrom)
+			toYear, err2 := strconv.Atoi(albumTo)
+			if err1 != nil || err2 != nil {
 				continue
 			}
-
-			toYear, err = strconv.Atoi(albumTo)
-			if err != nil {
-				continue
-			}
-
 			if fromYear > toYear {
 				fromYear, toYear = toYear, fromYear
 			}
-		}
-		if hasAlbumFilter {
-			a, err := strconv.Atoi(artist.FirstAlbum[:4])
-			if err != nil {
+			if len(artist.FirstAlbum) < 4 {
 				continue
 			}
-
-			if a < fromYear || a > toYear {
+			yearStr := artist.FirstAlbum[len(artist.FirstAlbum)-4:]
+			a, err := strconv.Atoi(yearStr)
+			if err != nil || a < fromYear || a > toYear {
 				continue
 			}
 		}

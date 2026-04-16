@@ -32,26 +32,19 @@
             </div>
 
             <div class="filter-group">
-                <div class="range-group">
-                    <label>Album range:</label>
+                <h4>Album Year Range</h4>
 
-                    <input type="number" class="albumFrom" name="albumFrom" id="albumFrom"
-                        min="1960" max="2020" value="1960">
-
-                    <input type="number" class="albumTo" name="albumTo" id="albumTo"
-                        min="1960" max="2020" value="2020">
+                <div class="range-inputs">
+                    <input type="number" id="minInput" name="albumFrom" value="1960" min="1960" max="2020">
+                    <input type="number" id="maxInput" name="albumTo" value="2020" min="1960" max="2020">
                 </div>
-                <div class="range">
-                    <label>Album range:</label>
 
-                    <input type="range" class="albumFrom" name="albumFrom" id="albumFrom"
-                        min="1960" max="2020" value="1960">
+                <div class="slider-container">
+                    <div class="slider-track"></div>
+                    <div class="slider-progress" id="progress"></div>
 
-                    <input type="range" class="albumTo" name="albumTo" id="albumTo"
-                        min="1960" max="2020" value="2020">
-                </div>
-                <div class="slider">
-                    <div class="progress"></div>
+                    <input type="range" id="minRange" min="1960" max="2020" value="1960">
+                    <input type="range" id="maxRange" min="1960" max="2020" value="2020">
                 </div>
             </div>
             
@@ -115,7 +108,7 @@
     </div>    
         <div class="pagination">
             {{if .HasPrev}}
-                <a href="/?page={{sub .Page 1}}&filter={{.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">← Previous</a>
+                <a href="/?page={{sub .Page 1}}&filter={{.Filter}}&year={{$.Year}}&albumFrom={{$.AlbumFrom}}&albumTo={{$.AlbumTo}}{{range $.Members}}&members={{.}}{{end}}">← Previous</a>
             {{else}}
                 <span class="disabled">← Previous</span>
             {{end}}
@@ -125,12 +118,12 @@
                 {{if eq $i $.Page}}
                     <span class="current-page">{{$i}}</span>
                 {{else}}
-                    <a href="/?page={{$i}}&filter={{$.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">{{$i}}</a>
+                    <a href="/?page={{$i}}&filter={{$.Filter}}&year={{$.Year}}&albumFrom={{$.AlbumFrom}}&albumTo={{$.AlbumTo}}{{range $.Members}}&members={{.}}{{end}}">{{$i}}</a>
                 {{end}}
             {{end}}
             
             {{if .HasNext}}
-                <a href="/?page={{add .Page 1}}&filter={{.Filter}}&year={{$.Year}}&album={{$.Album}}{{range $.Members}}&members={{.}}{{end}}">Next →</a>
+                <a href="/?page={{add .Page 1}}&filter={{.Filter}}&year={{$.Year}}&albumFrom={{$.AlbumFrom}}&albumTo={{$.AlbumTo}}{{range $.Members}}&members={{.}}{{end}}">Next →</a>
             {{else}}
                 <span class="disabled">Next →</span>
             {{end}}
@@ -139,29 +132,74 @@
     <script>
         const range = document.getElementById("yearRange");
         const value = document.getElementById("value");
-        const slider = document.querySelector(".slider-group");
-        const progress = slider.querySelector(".progress");
-        
-        const from = slider.querySelector(".albumFrom");
-        const to = slider.querySelector(".albumTo");
+        const minRange = document.getElementById("minRange");
+        const maxRange = document.getElementById("maxRange");
 
-        const fromVal = slider.querySelector(".albumFromVal");
-        const toVal = slider.querySelector(".albumToVal");
+        const minInput = document.getElementById("minInput");
+        const maxInput = document.getElementById("maxInput");
 
+        const progress = document.getElementById("progress");
+
+        const min = parseInt(minRange.min);
+        const max = parseInt(minRange.max);
 
         range.addEventListener("input", () => {
             value.textContent = range.value;
         });
       
-        fromVal.addEventListener("input", () => {
-            if(parseInt(fromVal.value) >= parseInt(toVal.value)) {
-                toVal.value = fromVal.value;
+        function updateProgress() {
+            const left = ((minRange.value - min) / (max - min)) * 100;
+            const right = ((maxRange.value - min) / (max - min)) * 100;
+
+            progress.style.left = left + "%";
+            progress.style.width = (right - left) + "%";
+        }
+
+        // range → input
+        minRange.addEventListener("input", () => {
+            if (parseInt(minRange.value) > parseInt(maxRange.value)) {
+                minRange.value = maxRange.value;
             }
+            minInput.value = minRange.value;
+            updateProgress();
         });
-        fromVal.addEventListener("input", () => {
-            if(parseInt(toVal.value) <= parseInt(fromVal.value)) {
-                fromVal.value = toVal.value;
+
+        maxRange.addEventListener("input", () => {
+            if (parseInt(maxRange.value) < parseInt(minRange.value)) {
+                maxRange.value = minRange.value;
             }
+            maxInput.value = maxRange.value;
+            updateProgress();
+        });
+
+        // input → range
+        minInput.addEventListener("input", () => {
+            if (parseInt(minInput.value) > parseInt(maxInput.value)) {
+                minInput.value = maxInput.value;
+            }
+            minRange.value = minInput.value;
+            updateProgress();
+        });
+
+        maxInput.addEventListener("input", () => {
+            if (parseInt(maxInput.value) < parseInt(minInput.value)) {
+                maxInput.value = minInput.value;
+            }
+            maxRange.value = maxInput.value;
+            updateProgress();
+        });
+
+        // init
+        updateProgress();
+
+        minRange.addEventListener("mousedown", () => {
+            minRange.style.zIndex = 2;
+            maxRange.style.zIndex = 1;
+        });
+
+        maxRange.addEventListener("mousedown", () => {
+            maxRange.style.zIndex = 2;
+            minRange.style.zIndex = 1;
         });
     </script>
 
