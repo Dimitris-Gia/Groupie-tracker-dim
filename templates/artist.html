@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Artist.Name}} - Groupie-Tracker</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+</head>
+<body>
+    <div class="upper-section">
+        <div class="title">
+            <a href="/" title="Home"><h1>Artists</h1></a>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="left-section">
+            <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}" width="220">
+            <h2>{{.Artist.Name}}</h2>
+            <p><strong>Creation Date:</strong> {{.Artist.CreationDate}}</p>
+            <p><strong>First Album:</strong> {{.Artist.FirstAlbum}}</p>
+            <h4>Members:</h4>
+            <ul>
+                {{range .Artist.Members}}
+                    <li>{{.}}</li>
+                {{end}}
+            </ul>
+            <div class="filter-group">
+                <a href="/artist/{{.Artist.Id}}?tab=dates"><p>Concert Dates</p></a>
+                <a href="/artist/{{.Artist.Id}}?tab=locations"><p>Concert Locations</p></a>
+                <a href="/artist/{{.Artist.Id}}?tab=relations"><p>Concert Dates And Locations</p></a>
+                <a href="/artist/{{.Artist.Id}}"><p>All Info</p></a>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div id="section-dates" class="filter-group">
+                <h4>Concert Dates</h4>
+                <ul>
+                    {{range .Dates.Dates}}
+                        <li>{{.}}</li>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div id="section-locations" class="filter-group">
+                <h4>Concert Locations</h4>
+                <ul>
+                    {{range .Locations.Locations}}
+                        <li>{{.}}</li>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div id="section-relations" class="filter-group">
+                <h4>Dates &amp; Locations</h4>
+                <ul>
+                    {{range $location, $dates := .Relations.DatesLocations}}
+                        <li><strong>{{$location}}</strong>
+                            <ul>
+                                {{range $dates}}
+                                    <li>{{.}}</li>
+                                {{end}}
+                            </ul>
+                        </li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tab = new URLSearchParams(window.location.search).get("tab");
+        const sections = ["dates", "locations", "relations"];
+        if (tab && sections.includes(tab)) {
+            sections.forEach(s => {
+                document.getElementById("section-" + s).style.display = s === tab ? "" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

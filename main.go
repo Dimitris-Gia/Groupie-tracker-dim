@@ -1,17 +1,26 @@
 package main
 
+// Groupie Tracker - main entry point.
+// Starts an HTTP server on port 8080, serves static files and registers route handlers.
+// External API base URL: https://groupietrackers.herokuapp.com/api/artists
+
 import (
-	"groupie-tracker-dim/handlers"
 	"log"
 	"net/http"
+
+	"groupie-tracker/handlers"
 )
 
 func main() {
+	// Serve files from the /static/ directory (CSS, JS, images)
 	fs := http.FileServer(http.Dir("static"))
-	// When someone visits /static/, strip that part and serve files from static folder
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// Home page: artist grid with filters and pagination
 	http.HandleFunc("/", handlers.HomeHandler)
+	// Artist detail page: /artist/{id} with optional ?tab=dates|locations|relations
+	http.HandleFunc("/artist/", handlers.ArtistHandler)
+	// Live search endpoint: returns JSON results and suggestions
 	http.HandleFunc("/search", handlers.SearchHandler)
 
 	log.Println("Server starting on http://localhost:8080")
